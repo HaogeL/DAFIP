@@ -23,7 +23,19 @@ vitis_hls -f run_hls.tcl
 ```
 C testbench reads testdata generated from the previous step,  drives the IIR with stimuli, and compares DUT and Matlab reference output with quantization error boundary. The DUT output will also be stored in `./vitis_hls/proj/solution/csim/build/dut_output.bin` for further plot.
 ### Check DUT output in Matlab
-`./matlab/check_sim_result.m` reads testdata.bin and dut_output.bin, and compare the results with theoretical quantization error bound curve. Given the IIR parameter, the upper bound is $$(\sum_{i=1}^{A-1}-2^{-(fwidth+A+1+i)})*2^{A}*(1-\frac{2^{A}-1}{2^{A}})^{n+1} + \sum_{i=1}^{A}-2^{-(fwidth+i)}$$ and lower bound is $$-2^{-(fwidth+A+1)}*2^{A}*(1-\frac{2^{A}-1}{2^{A}})^{n+1}$$, where `A` is shift distance and `fwidth` is the fraction width of data type.
+`./matlab/check_sim_result.m` reads testdata.bin and dut_output.bin, and compare the results with theoretical quantization error bound curve. Given the IIR parameter, the upper bound is
+
+$$
+\sum_{i=1}^{A-1}-2^{-(fwidth+A+1+i)} * 2^{A}*(1-\frac{2^{A}-1}{2^{A}})^{n+1} + \sum_{i=1}^{A}-2^{-(fwidth+i)}
+$$
+
+and lower bound is
+
+$$
+-2^{-(fwidth+A+1)} * 2^{A}*(1-\frac{2^{A}-1}{2^{A}})^{n+1}
+$$
+
+,where `A` is shift distance and `fwidth` is the fraction width of data type.
 The figure below shows that simulation error is inside of the boundary.
 ![Quantization err](./README/Quantization_error100.png "QuantizationError100points")\
 Note that the actual simulation error should be much better than theoretical boundary. This is because the error on the boundary can only be achieved when the maximum quantization error is introduced every time when data is quantized to a smaller precision, which explains, in the figure below, the acutal quantization error occupies only ~70% of the error boundary.
