@@ -4,7 +4,7 @@
 This IIR implementation is an example of first-order IIR filer with testbench to check the simulation results. Key features of the provided IIR are:
 - Difference equation is $$y[n] = ax[n] + (1-a)y[n-1]$$, where a = 2^(-A). In the example, A is 3 and division operation is realized by arithmetic shift.
 - Data type of input and output is `ap_fixed<16,2>`
-- Theoretical quantization error falls in the range of (-0.000031,0.000076). Random simulation quantization error falls in the range of (-0.000019, 0.000066). Check [xxx](#Calculate-theoritical-quantization-error) for the theorithical proof.
+- Theoretical quantization error falls in the range of (-0.000031,0.000076). Random simulation quantization error falls in the range of (-0.000019, 0.000066). Check Section [Calculate theoritical quantization error](#Calculate-theoritical-quantization-error) for the theorithical proof.
 ## Implementation structure
 ![IIR structure](./README/IIRExampleStructure.png "IIR structure")*IIR structure*
 ## Testbench
