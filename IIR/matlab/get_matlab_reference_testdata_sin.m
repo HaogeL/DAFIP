@@ -15,4 +15,4 @@ hold on
 plot(ref_output(1:10000), '*')
 h=legend("input samples", "filtered samples");
 set(h,'FontSize',12);
-exportgraphics(fig, 'output.png');
+%exportgraphics(fig, 'output.png');

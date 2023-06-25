@@ -6,7 +6,7 @@
 using namespace current_hls;
 int main(){
 	//get test data
-	auto v = matread("testdata.bin");
+	auto v = utils::matread("testdata.bin");
 	DATA_T in = 0;
 	DATA_T out = 0;
 	std::vector<double> out_vec;
@@ -40,6 +40,6 @@ int main(){
 	}
 	printf("Simulation err_upper is %lf.\nSimulation err_lower is %lf\n", sim_err_upper, sim_err_lower);
 
-	matwrite_double("dut_output.bin", out_vec); //dut_output.bin will be generated in <vitis-proj-path>/solution/csim/build
+	utils::matwrite_double("dut_output.bin", out_vec); //dut_output.bin will be generated in <vitis-proj-path>/solution/csim/build
 	return num_error;
 }

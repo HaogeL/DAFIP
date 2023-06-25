@@ -1,0 +1,18 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/proj/westcoastasic/Xilinx/Vitis/2022.1/Vitis_HLS/2022.1/include/"
+            ],
+            "defines": [],
+            "compilerPath": "/proj/westcoastasic/Xilinx/Vitis/2022.1/Vitis_HLS/2022.1/tps/lnx64/gcc-6.2.0/bin/g++",
+            "cStandard": "gnu17",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "linux-gcc-arm64",
+            "configurationProvider": "ms-vscode.makefile-tools"
+        }
+    ],
+    "version": 4
+}
