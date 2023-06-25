@@ -10,3 +10,4 @@ Digital ASIC FPGA IP examples
 | [FrequencyDivider](https://github.com/HaogeL/DAFIP/tree/main/FrequencyDivider/3)|:white_check_mark:|:x:|:x:| Common   |
 | [Multi-based divider](https://github.com/HaogeL/multiplication_based_divider/blob/master/readme/readme.pdf)|:white_check_mark:|:x:|:white_check_mark:| DSP      |
 | [FSMTemplate](https://github.com/HaogeL/DAFIP/tree/main/FSMTemplate)|:white_check_mark:|:x:|:x: | Common   |
+| [GrayBinConversion](https://github.com/HaogeL/DAFIP/tree/main/GrayBin)|:white_check_mark:|:white_check_mark:|:white_check_mark:| Common   |
