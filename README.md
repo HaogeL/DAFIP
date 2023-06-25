@@ -1,5 +1,19 @@
 # DAFIP
 Digital ASIC FPGA IP examples
+# Content
+- [Overview](#overview)
+- [IIR implementation](#iir-implementation)
+  - [Implementation structure](#implementation-structure)
+  - [Testbench](#testbench)
+    - [Get reference input and output](#get-reference-input-and-output)
+    - [Run C testbench](#run-c-testbench)
+    - [Check DUT output in Matlab](#check-dut-output-in-matlab)
+  - [Calculate theoritical quantization error](#calculate-theoritical-quantization-error)
+- [Gray and binary number convertion](#gray-and-binary-number-convertion)
+  - [Background](#background)
+  - [Binary to gray](#binary-to-gray)
+  - [Gray to binary](#gray-to-binary)
+    - [Optimize timing: trade area for timing](#optimize-timing-trade-area-for-timing)
 # Overview
 | IP                  | Implementation | Verification | Documentation | Category |
 |---------------------|----------------|--------------|---------------|----------|
@@ -96,7 +110,7 @@ vitis_hls -f run_hls_gray2bin
 vitis_hls -p gray2bin
 ```
 ### Optimize timing: trade area for timing
-Because xor operation is **commutative** and **associative**, we can xor many different bits in parallel. Implementation found in function [**gray2bin_paral**]{link} utilizes the idea of [parallel prefix algorithms](https://www.chessprogramming.org/Parallel_Prefix_Algorithms). The delay for N-bit gray-to-bincary convertion roughly equals to $ceil(log_{2}{N})$ times of the propagation dealy of an **xor** operation. In the provided example, C synthesis results of optimized and non-optimized gray-to-binary conversions are compared in the table below.
+Because xor operation is **commutative** and **associative**, we can xor many different bits in parallel. Implementation found in function [gray2bin_paral](https://github.com/HaogeL/DAFIP/blob/main/GrayBin/vitis_hls/gray_bin.h#L63) utilizes the idea of [parallel prefix algorithms](https://www.chessprogramming.org/Parallel_Prefix_Algorithms). The delay for N-bit gray-to-bincary convertion roughly equals to $ceil(log_{2}{N})$ times of the propagation dealy of an **xor** operation. In the provided example, C synthesis results of optimized and non-optimized gray-to-binary conversions are compared in the table below.
 ```text
 +----------------+-------+---------+--------+---------+----------+----+----+
 |     Modules    |       | Latency | Latency|         |          |    |    |
