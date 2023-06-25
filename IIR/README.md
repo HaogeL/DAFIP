@@ -6,14 +6,20 @@ This IIR implementation is an example of first-order IIR filer with testbench to
 - Data type of input and output is `ap_fixed<16,2>`
 - Theoretical quantization error falls in the range of (-0.000031,0.000076). Random simulation quantization error falls in the range of (-0.000019, 0.000066). Check Section [Calculate theoritical quantization error](#Calculate-theoritical-quantization-error) for the theorithical proof.
 ## Implementation structure
-![IIR structure](./README/IIRExampleStructure.png "IIR structure")*IIR structure*
+<figure>
+<img src="./README/IIRExampleStructure.png" width="50%"/>
+<figcaption>IIR structure</figcaption>
+</figure>
+
 ## Testbench
 ### Get reference input and output
 Testbench stimuli and reference ouput are obtained from Matlab scripts`./matlab/get_matlab_reference_testdata_rand.m` and `./matlab/get_matlab_reference_testdata_sin.m`. \
 The same IIR filter in Matlab is realized by Matlab [1-D filter function](https://www.mathworks.com/help/matlab/ref/filter.html?s_tid=doc_ta).
 
-![SinTestData](./README/ReferenceInputOutput.png "Matlab testdata")
-
+<figure>
+<img src="./README/ReferenceInputOutput.png" width="50%"/>
+<figcaption>Matlab testdata</figcaption>
+</figure>
 Testdata is stored in binary file `./testData/testdata.bin` and later read by C testbench
 ### Run C testbench
 Run tcl file to create Vitis_hls project, run C simulation and RTL simulation
@@ -36,14 +42,25 @@ $$
 $$
 
 ,where `A` is shift distance and `fwidth` is the fraction width of data type.
-The figure below shows that simulation error is inside of the boundary.
-![Quantization err](./README/Quantization_error100.png "QuantizationError100points")\
+The figure below shows that simulation error is inside of the boundary.x
+<figure>
+<img src="./README/Quantization_error100.png" width="50%"/>
+<figcaption>QuantizationError100points</figcaption>
+</figure>
+
 Note that the actual simulation error should be much better than theoretical boundary. This is because the error on the boundary can only be achieved when the maximum quantization error is introduced every time when data is quantized to a smaller precision, which explains, in the figure below, the acutal quantization error occupies only ~70% of the error boundary.
-![Quantization err](./README/Quantization_error_full.png "QuantizationError100_full")
+<figure>
+<img src="./README/Quantization_error_full.png" width="50%"/>
+<figcaption>QuantizationError100_full</figcaption>
+</figure>
+
 ## Calculate theoritical quantization error
 Quantization error can be considered as an `unit step input` with varying range. Variable `diff` use the rounding method of `AP_RND`, which is  equvilent to introduce an error after the shift operator in the structure, shown as the `quantization error` in the figure below
+<figure>
+<img src="./README/IIRStructureWithQuanErr.png" width="50%"/>
+<figcaption>IIR Structure with quantization error</figcaption>
+</figure>
 
-![IIRStructureWithQuanErr](./README/IIRStructureWithQuanErr.png "IIR")*IIR Structure with quantization error*
 The data type of `diff` variable is `ap_fixed<17,2>`, and one of the operands of the previous shift operation is `ap_fixed<18,2>`. Therefore when the result is converted to `diff`, HLS rounds the value to the nearest representable value of `ap_fixed<17,2>`, which means the added quantization error ranges from $-20^{-19}-20^{-20}$ to $2^{-18}$ (denoted as $quan_{range}$). Then the difference equation with the added quantization error can be rewriten as
 
 $$
