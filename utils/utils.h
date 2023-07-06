@@ -28,6 +28,7 @@ static vector<vector<double>> matread(const string& filename) {
 static void matwrite_double(const string& filename, const vector<double> &vec){
 	ofstream fs(filename, ios::out | ios::binary);
 	fs.write((char*)vec.data(), vec.size()*8);
+    fs.close();
 }
 
 //return floor(log2(n)) + 1
