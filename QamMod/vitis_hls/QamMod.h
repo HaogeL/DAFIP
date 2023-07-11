@@ -8,7 +8,6 @@ namespace qam_mod {
 /*
 bits per symbol   modulation format (M)
 2                 4
-<<<<<<< HEAD
 4                 16
 6                 64
 8                 256
@@ -24,13 +23,6 @@ Qam mode is determined by template [num_bits_symb]. template [DATA_CSTLT_C] shou
   typedef ap_uint<NUMBITSPERSYMB> BITS_T;
   typedef std::complex<ap_int<NUMBITSPERSYMB/2+1>> CSTL_T;
   void QamMod16(const BITS_T bits, CSTL_T& constellation);
-=======
-4				  16
-6				  64
-8				  256
-10                1k
-12				  4k
->>>>>>> baccee830ebdb5ed5f3d7aa3bc40286e12a7b1b2
 */
 template <class DATA_CSTLT_C, unsigned int num_bits_symb>
 DATA_CSTLT_C QamMod_fixed(ap_uint<num_bits_symb> bits) {
@@ -64,8 +56,6 @@ DATA_CSTLT_C QamMod_fixed(ap_uint<num_bits_symb> bits) {
   double_imag = imag << 2;
   */
 };
-<<<<<<< HEAD
-
 
 template <class DATA_CSTLT_C, unsigned int num_bits_symb>
 ap_uint<num_bits_symb> DeQamMod_fixed(DATA_CSTLT_C cstlt) {
@@ -80,7 +70,5 @@ ap_uint<num_bits_symb> DeQamMod_fixed(DATA_CSTLT_C cstlt) {
   return  ret;
 };
 
-=======
->>>>>>> baccee830ebdb5ed5f3d7aa3bc40286e12a7b1b2
 } // end namespace qam_mod
 #endif
