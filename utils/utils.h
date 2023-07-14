@@ -46,7 +46,7 @@ constexpr unsigned long ceil_log2(unsigned long n){
 	unsigned int floorplus1 = log2_num_of_bits(n);
 	return int_pow(2, floorplus1-1) == n ? floorplus1-1:floorplus1;
 }
-
-
+template<class T>
+using base_type_t = typename T::value_type;
 }//end namespace utils
 #endif
