@@ -1,19 +1,6 @@
 # DAFIP
 Digital ASIC FPGA IP examples
-# Content
-- [Overview](#overview)
-- [IIR implementation](#iir-implementation)
-  - [Implementation structure](#implementation-structure)
-  - [Testbench](#testbench)
-    - [Get reference input and output](#get-reference-input-and-output)
-    - [Run C testbench](#run-c-testbench)
-    - [Check DUT output in Matlab](#check-dut-output-in-matlab)
-  - [Calculate theoritical quantization error](#calculate-theoritical-quantization-error)
-- [Gray and binary number convertion](#gray-and-binary-number-convertion)
-  - [Background](#background)
-  - [Binary to gray](#binary-to-gray)
-  - [Gray to binary](#gray-to-binary)
-    - [Optimize timing: trade area for timing](#optimize-timing-trade-area-for-timing)
+
 # Overview
 | IP                  | Implementation | Verification | Documentation | Category |
 |---------------------|----------------|--------------|---------------|----------|
@@ -70,6 +57,7 @@ Note that the actual simulation error should be much better than theoretical bou
 Quantization error can be considered as an `unit step input` with varying range. Variable `diff` use the rounding method of `AP_RND`, which is  equvilent to introduce an error after the shift operator in the structure, shown as the `quantization error` in the figure below
 
 ![IIRStructureWithQuanErr](./IIR/README/IIRStructureWithQuanErr.png "IIR")*IIR Structure with quantization error*
+
 The data type of `diff` variable is `ap_fixed<17,2>`, and one of the operands of the previous shift operation is `ap_fixed<18,2>`. Therefore when the result is converted to `diff`, HLS rounds the value to the nearest representable value of `ap_fixed<17,2>`, which means the added quantization error ranges from $-20^{-19}-20^{-20}$ to $2^{-18}$ (denoted as $quan_{range}$). Then the difference equation with the added quantization error can be rewriten as
 
 $$
@@ -110,7 +98,7 @@ vitis_hls -f run_hls_gray2bin
 vitis_hls -p gray2bin
 ```
 ### Optimize timing: trade area for timing
-Because xor operation is **commutative** and **associative**, we can xor many different bits in parallel. Implementation found in function [gray2bin_paral](https://github.com/HaogeL/DAFIP/blob/main/GrayBin/vitis_hls/gray_bin.h#L63) utilizes the idea of [parallel prefix algorithms](https://www.chessprogramming.org/Parallel_Prefix_Algorithms). The delay for N-bit gray-to-bincary convertion roughly equals to $ceil(log_{2}{N})$ times of the propagation dealy of an **xor** operation. In the provided example, C synthesis results of optimized and non-optimized gray-to-binary conversions are compared in the table below.
+Because xor operation is **commutative** and **associative**, we can xor many different bits in parallel. Implementation found in function [gray2bin_paral](https://github.com/HaogeL/DAFIP/blob/main/GrayBin/vitis_hls/gray_bin.h#L63) utilizes the idea of [parallel prefix algorithms](https://www.chessprogramming.org/Parallel_Prefix_Algorithms). The delay for N-bit gray-to-bincary convertion roughly equals to $ceil(log_{2}{N})$ times of the propagation dealy of an **xor** operation. In the provided example, C synthesis results of optimized and non-optimized gray-to-binary conversions are compared in the table below with ap_vld as port-level protocal and ap_ctrl_hs as block-level protocal.
 ```text
 +----------------+-------+---------+--------+---------+----------+----+----+
 |     Modules    |       | Latency | Latency|         |          |    |    |
@@ -126,4 +114,42 @@ Because xor operation is **commutative** and **associative**, we can xor many di
 |+ gray2bin_paral_hls  |  0.16|        1|   1.000|        1|       yes| 58|  162|
 +----------------------+------+---------+--------+---------+----------+---+-----+
 ```
+# QAM modulation
+HLS desgin [QamMod directory](https://github.com/HaogeL/DAFIP/tree/main/QamMod/vitis_hls) demonstrates 4, 16, 64, 256 QAM modulation examples with binary symbol order. Their implementations are all derived from [QamMod.h](https://github.com/HaogeL/DAFIP/blob/main/QamMod/vitis_hls/QamMod.h), thus it is easy to expand to higher modulation formats, such as 1K QAM. 
 
+## non-normalized QAM
+For non-normalized QAM modulation, symbol space is 2, and symbol order of 16-QAM as an example is shown as figure below. By using [bin2gray converter](https://github.com/HaogeL/DAFIP/blob/main/GrayBin/vitis_hls/gray_bin.cpp), gray-code ordering is easily achieved. 
+
+![16-QAM](./QamMod/README/QAM16.png "QAM16")*QAM16 example*
+
+## normalized QAM
+Based on non-normalized QAM modulation, fixed-point numbers are used to represent constellation, and the average power is normalized to 1. As a comparison of the figure above, normalized 16-QAM constellation is plotted below.
+![16-QAM](./QamMod/README/QAM16_normalized.png "Normalized QAM16")*Normalized QAM16 example*
+
+FPGA resource comsumption for 4-, 16-, 64-, 256- QAM are listed below, with constellation is represented by **std::complex<ap_fixed<20, 2>>**, in which port-level and block-level are removed and therefore they are considered as combinational logic. For device xcvu9p-flga2104-2-i, their speed, with constraint of 1 ns, are shown in the table as well.
+| 4- QAM                                                                      | 16- QAM                                                                     | 64- QAM                                                                    | 256- QAM                                                                    |
+|-----------------------------------------------------------------------------|-----------------------------------------------------------------------------|----------------------------------------------------------------------------|-----------------------------------------------------------------------------|
+| LUT:    2; Others: 0                                                         | LUT:    4; Others: 0                                                         | LUT:    12; Others: 0                                                       | LUT:    34; Others: 0                                                        |
+| Max path delay: 0.038ns  (logic 0.038ns (100.000%)  route 0.000ns (0.000%)) | Max path delay: 0.038ns  (logic 0.038ns (100.000%)  route 0.000ns (0.000%)) | Max path delay: 0.249ns  (logic 0.229ns (91.968%)  route 0.020ns (8.032%)) | MAX path delay: 0.593ns  (logic 0.328ns (55.312%)  route 0.265ns (44.688%)) |
+
+## Demodulation
+Demodulation algorithm is reverse process of QAM modulation, which is implemented in [QamMod.h](https://github.com/HaogeL/DAFIP/blob/main/QamMod/vitis_hls/QamMod.h).
+
+## Data precision v.s. MSE
+All the examples of normalized QAM modulations use **std::complex<ap_fixed<20, 2>>** to represent constellations, which is not identical to ideal double datetype. Define the MSE as 
+$$MSE = \frac{1}{M\cdot pow_{avg}}\sum_{i=1}^{M}(|cst_{ideal}-cst_{hls}|^{2})$$
+, where M is the size of constellation, $cst_{ideal}$ and $cst_{hls}$ are ideal and fixed-point constellation outputs, respectively, $M$ is modulation size, and $pow_{avg}$ is the average power of constellation.
+
+As an example, steps to check MSE of 256 QAM follows below. 
+```bash
+cd QamMod/vitis_hls
+vitis_hls -f run_hls_Qam256_normalized.tcl
+cd ../matlab && matlab
+>> CheckQamResult(256, 1)
+For normolized256QAM
+average power of HLS QAM output is 0.999947576929117
+average power of ideal QAM output is 1.000000000000000
+quantization mse -91.630037 db
+```
+The following figure shows decreasing MSE when more fractional bits are used to represent constellations.
+![MSEvsFrac](./QamMod/README/fractionalBitsVsMse.png "fractional bits v.s. MSE") 

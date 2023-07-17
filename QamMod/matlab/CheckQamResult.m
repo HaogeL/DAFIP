@@ -1,4 +1,4 @@
-function fail = CheckQamResult(M, normalized)
+function CheckQamResult(M, normalized)
 
 %% load Vitis Csimulation data
 bits_per_symb = log2(M);
@@ -54,7 +54,7 @@ if(normalized == 1)
     diff_err = y - cstl.';
     mse = mean(abs(diff_err) .^ 2);
     mse_db = 10*log10(mse);
-    fprintf("quantization cases mse of %f db\n", mse_db);
+    fprintf("quantization mse %20.18f db\n", mse_db);
     
     figure(2)
     clf;
