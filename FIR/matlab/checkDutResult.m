@@ -24,7 +24,7 @@ clf;
 plot(reference_output(1:128), 'o');
 hold on;
 plot(output_from_dut(1:128), '*');
-
+legend('Matlab ideal model output', 'DUT model output')
 % check quantization error
 diff_lin = mean((output_from_dut - reference_output).^2)
 diff_log = 10*log10(abs(diff_lin))
