@@ -1,6 +1,20 @@
 # DAFIP
 Digital ASIC FPGA IP examples
-
+- [DAFIP](#dafip)
+- [Overview](#overview)
+- [IIR implementation](#iir-implementation)
+  * [Implementation structure](#implementation-structure)
+  * [Testbench](#testbench)
+  * [Calculate theoritical quantization error](#calculate-theoritical-quantization-error)
+- [Gray and binary number convertion](#gray-and-binary-number-convertion)
+  * [Background](#background)
+  * [Binary to gray](#binary-to-gray)
+  * [Gray to binary](#gray-to-binary)
+- [QAM modulation](#qam-modulation)
+  * [non-normalized QAM](#nonnormalized-qam)
+  * [normalized QAM](#normalized-qam)
+  * [Demodulation](#demodulation)
+  * [Data precision v.s. MSE](#data-precision-vs-mse)
 # Overview
 | IP                  | Implementation | Verification | Documentation | Category |
 |---------------------|----------------|--------------|---------------|----------|
@@ -12,7 +26,8 @@ Digital ASIC FPGA IP examples
 | [Multi-based divider](https://github.com/HaogeL/multiplication_based_divider/blob/master/readme/readme.pdf)|:white_check_mark:|:x:|:white_check_mark:| DSP      |
 | [FSMTemplate](https://github.com/HaogeL/DAFIP/tree/main/FSMTemplate)|:white_check_mark:|:x:|:x: | Common   |
 | [GrayBinConversion](https://github.com/HaogeL/DAFIP/tree/main/GrayBin)|:white_check_mark:|:white_check_mark:|:white_check_mark:| Common   |
-
+| [FIR](https://github.com/HaogeL/DAFIP/tree/main/FIR)|:white_check_mark:|:white_check_mark:|:white_check_mark:| DSP   |
+| [QAMMOF](https://github.com/HaogeL/DAFIP/tree/main/QamMod)|:white_check_mark:|:white_check_mark:|:white_check_mark:| DSP   |
 # IIR implementation
 This IIR implementation is an example of first-order IIR filer with testbench to check the simulation results. Key features of the provided IIR are:
 - Difference equation is $$y[n] = ax[n] + (1-a)y[n-1]$$, where a = 2^(-A). In the example, A is 3 and division operation is realized by arithmetic shift.
@@ -153,3 +168,33 @@ quantization mse -91.630037 db
 ```
 The following figure shows decreasing MSE when more fractional bits are used to represent constellations.
 ![MSEvsFrac](./QamMod/README/fractionalBitsVsMse.png "fractional bits v.s. MSE") 
+
+# FIR
+
+## Normal FIR with real input signal
+```bash
+# generate test data and coefficients from Matlab
+cd FIR/matlab
+matlab -nodesktop -nojvm -r "run('getTestData.m'); exit"
+# run vitis model, vitis project is located in the directory named proj
+cd ../vitis_hls
+vitis_hls -f run_hls.tcl
+# run matlab script to check the quality of results
+cd ../matlab
+matlab -nodesktop -r "run('checkDutResult.m');"
+# type exit to quit Matlab CLI
+```
+
+## Complex FIR with complex input signal and coefficients
+```bash
+# generate test data and coefficients from Matlab
+cd FIR/matlab
+matlab -nodesktop -nojvm -r "run('getTestData_cplx.m'); exit"
+# run vitis model, vitis project is located in the directory named proj_cplx
+cd ../vitis_hls
+vitis_hls -f run_hls_fir_cplx.tcl
+# run matlab script to check the quality of results
+cd ../matlab
+matlab -nodesktop -r "run('checkDutResult_cplx.m');"
+# type exit to quit Matlab CLI
+```
