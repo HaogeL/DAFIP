@@ -3,12 +3,17 @@
 #include <fstream>
 #include <vector>
 #include <complex>
+#include <iostream>
 
 namespace utils{
 using namespace std;
 
 static vector<vector<double>> matread(const string& filename) {
 	ifstream fs(filename, fstream::binary);
+	if (!fs.is_open()){
+		cout << "error: fail to open " << filename << " exiting..." << endl;
+		exit(-1);
+	}
 	// Header
 	uint32_t rows, cols;
 	uint64_t type_strings;
