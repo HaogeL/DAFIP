@@ -245,12 +245,14 @@ $$
 
 In this example, N is 9. The theoretical SNR is 61.0494, and the simulated SNR is 61.0548 
 
-![NCO_double](./NCO_LUT/matlab/double_precision_model_simulation.jpg "Double precision model simulation") *Double precision model simulation*
+![NCO_double](./NCO_LUT/matlab/double_precision_model_simulation.jpg "Double precision model simulation") \
+*Double precision model simulation*
 
 If NCO output is quantized to fixed point data, 18 bits in the provided example, the SNR decreases to 55.034 dB.
 
 
-![NCO_fixed](./NCO_LUT/matlab/fixed_precision_model_simulation.jpg "Fixed precision model simulation") *Fixed-point precision model simulation*
+![NCO_fixed](./NCO_LUT/matlab/fixed_precision_model_simulation.jpg "Fixed precision model simulation") \
+*Fixed-point precision model simulation*
 
 ## Error correction
 The most contribution to the noise is cased by the phase noise during quantization. The phase noise can be easily obtained and the output error can be compensated by using the product of phase noise and derivative at the selected phase.
