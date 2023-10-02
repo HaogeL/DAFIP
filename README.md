@@ -211,28 +211,38 @@ Two Matlab scripts are used to generate stimulus, run HLS module, and check the 
 For double-number model, the SNR is derived as the follows.
 
 Assume sine or coine from $0$ to $2\pi$ is the signal NCO wants to generate. The phase resolution ($ph_{lsb}$) is $\pi/2/512$ in the provided example, which means the distribution of phase error is a uniform distribution, from $\frac{-ph_{lsb}}{2}$ to $\frac{ph_{lsb}}{2}$ with probability of $\frac{1}{ph_{lsb}}$. Therefore, the error can be expressed as 
+
 $$
 Err = sig' * Err_{ph}
 $$
+
 and
+
 $$
 Err^2_{ph} = \int_{\frac{-ph_{lsb}}{2}}^{\frac{ph_{lsb}}{2}} e^2\frac{1}{ph_{lsb}}de
 =\frac{ph_{lsb}^{2}}{12}
 $$
+
 , where $sig'$ is the derivative of signal and $Err_{ph}$ is phase error. If sine wave is applied, $Err$ power can be expressed as
+
 $$
 P_{err} = \frac{1}{2\pi}\int_{0}^{2\pi}cos^2(x)Err^2_{ph} = \frac{ph_{lsb}^{2}}{24}
 $$
+
 The SNR of double precision model is
+
 $$
 10log_{10}(\frac{P_{sig}}{P_{err}}) = 10log_{10}(\frac{12}{ph_{lsb}^{2}})
 $$
+
 The phase resolution ($ph^{2}_{lsb}$) depends on the number of entries in the pre-calculated LUT, and it can be expressed as $\frac{\pi}{2}/2^{N}$. 
 
 By summarizing above, the final SNR is
+
 $$
 SNR = 10*log_{10}(\frac{48}{\pi^{2}}2^{2N}) = 6.8694 +6.02N
 $$
+
 In this example, N is 9. The theoretical SNR is 61.0494, and the simulated SNR is 61.0548 
 
 ![NCO_double](./NCO_LUT/matlab/double_precision_model_simulation.jpg "Double precision model simulation") *Double precision model simulation*
