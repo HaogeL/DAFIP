@@ -130,6 +130,8 @@ SIG_OUT_TC nco_lut(PHASE_TR phase_in){
             printf("error: quad is %d\n", quad.to_int());
             exit(-1);
         #endif
+		sin_out_tmp = sinlut[sin_index];
+		cos_out_tmp = (cos_index == index512) ? (SIG_OUT_TR)1:sinlut[cos_index];
     } 
     #endif
     return SIG_OUT_TC(cos_out_tmp, sin_out_tmp);

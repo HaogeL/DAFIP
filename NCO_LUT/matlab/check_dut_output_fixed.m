@@ -8,7 +8,7 @@ addpath('../../utils');
 %+infinate snr, because it hits exactally the phases that are used by generating sin table
 %phase = 0:2^-9:8-2^-9; 
 
-test_len = 512000;
+test_len = 51200;
 phase = linspace(0, 8, test_len);
 
 % write phase to bin file
@@ -37,3 +37,6 @@ pow_cos = sum(cos_ideal.^2)/length(phase);
 
 snr_sin = 10*log10(pow_sin/pow_err_sin);
 snr_cos = 10*log10(pow_cos/pow_err_cos);
+
+legend(strcat('cos, snr:', sprintf('%f', snr_cos)), strcat('sin, snr:', sprintf('%f', snr_sin)));
+%exportgraphics(gcf, 'fixed_precision_model_simulation.jpg')

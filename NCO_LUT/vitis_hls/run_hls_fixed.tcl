@@ -7,7 +7,7 @@ add_files -tb "nco_lut_generate_dut_output.cpp" -cflags "-I../../utils"
 add_files -tb "../testData/testdata.bin"
 
 # Set the top-level function
-#set_top fir_rrc
+set_top nco_lut_hls
 
 # ########################################################
 # Create a solution
@@ -18,7 +18,7 @@ set_part {xcvu9p-flga2104-2-i}
 create_clock -period 5 -name default
 
 # Set variable to select which steps to execute
-set hls_exec 1
+set hls_exec 2
 
 csim_design
 # Set any optimization directives

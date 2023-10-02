@@ -15,6 +15,10 @@ Digital ASIC FPGA IP examples
   * [normalized QAM](#normalized-qam)
   * [Demodulation](#demodulation)
   * [Data precision v.s. MSE](#data-precision-vs-mse)
+- [LUT-based NCO](#numerically-controlled-oscillator)
+  * [SNR](#double-precision-model-and-snr)
+  * [Error correction](#error-correction)
+
 # Overview
 | IP                  | Implementation | Verification | Documentation | Category |
 |---------------------|----------------|--------------|---------------|----------|
@@ -27,7 +31,8 @@ Digital ASIC FPGA IP examples
 | [FSMTemplate](https://github.com/HaogeL/DAFIP/tree/main/FSMTemplate)|:white_check_mark:|:x:|:x: | Common   |
 | [GrayBinConversion](https://github.com/HaogeL/DAFIP/tree/main/GrayBin)|:white_check_mark:|:white_check_mark:|:white_check_mark:| Common   |
 | [FIR](https://github.com/HaogeL/DAFIP/tree/main/FIR)|:white_check_mark:|:white_check_mark:|:white_check_mark:| DSP   |
-| [QAMMOF](https://github.com/HaogeL/DAFIP/tree/main/QamMod)|:white_check_mark:|:white_check_mark:|:white_check_mark:| DSP   |
+| [QAMMOD](https://github.com/HaogeL/DAFIP/tree/main/QamMod)|:white_check_mark:|:white_check_mark:|:white_check_mark:| DSP   |
+| [NCO](https://github.com/HaogeL/DAFIP/tree/main/NCO_LUT)|:white_check_mark:|:white_check_mark:|:white_check_mark:| DSP   |
 # IIR implementation
 This IIR implementation is an example of first-order IIR filer with testbench to check the simulation results. Key features of the provided IIR are:
 - Difference equation is $$y[n] = ax[n] + (1-a)y[n-1]$$, where a = 2^(-A). In the example, A is 3 and division operation is realized by arithmetic shift.
@@ -198,3 +203,44 @@ cd ../matlab
 matlab -nodesktop -r "run('checkDutResult_cplx.m');"
 # type exit to quit Matlab CLI
 ```
+
+# Numerically controlled oscillator
+Two Matlab scripts are used to generate stimulus, run HLS module, and check the quality of DUT output. **check_dut_output_double.m** runs double representation of NCO and **check_dut_output_fixed.m** run fixed point number representation of NCO. In the NCO implementation, a LUT containing 512 sinusoid values, ranging from $0$ to $\pi/2-\pi/2/512$, are pre-generated and stored in ROM in silicon. At the end of the two Matlab scripts, the SNR are calculated, using Matlab build-in **sin()** and **cos()** functions. 
+
+## Double-precision model and SNR
+For double-number model, the SNR is derived as the follows.
+
+Assume sine or coine from $0$ to $2\pi$ is the signal NCO wants to generate. The phase resolution ($ph_{lsb}$) is $\pi/2/512$ in the provided example, which means the distribution of phase error is a uniform distribution, from $\frac{-ph_{lsb}}{2}$ to $\frac{ph_{lsb}}{2}$ with probability of $\frac{1}{ph_{lsb}}$. Therefore, the error can be expressed as 
+$$
+Err = sig' * Err_{ph}
+$$
+and
+$$
+Err^2_{ph} = \int_{\frac{-ph_{lsb}}{2}}^{\frac{ph_{lsb}}{2}} e^2\frac{1}{ph_{lsb}}de
+=\frac{ph_{lsb}^{2}}{12}
+$$
+, where $sig'$ is the derivative of signal and $Err_{ph}$ is phase error. If sine wave is applied, $Err$ power can be expressed as
+$$
+P_{err} = \frac{1}{2\pi}\int_{0}^{2\pi}cos^2(x)Err^2_{ph} = \frac{ph_{lsb}^{2}}{24}
+$$
+The SNR of double precision model is
+$$
+10log_{10}(\frac{P_{sig}}{P_{err}}) = 10log_{10}(\frac{12}{ph_{lsb}^{2}})
+$$
+The phase resolution ($ph^{2}_{lsb}$) depends on the number of entries in the pre-calculated LUT, and it can be expressed as $\frac{\pi}{2}/2^{N}$. 
+
+By summarizing above, the final SNR is
+$$
+SNR = 10*log_{10}(\frac{48}{\pi^{2}}2^{2N}) = 6.8694 +6.02N
+$$
+In this example, N is 9. The theoretical SNR is 61.0494, and the simulated SNR is 61.0548 
+
+![NCO_double](./NCO_LUT/matlab/double_precision_model_simulation.jpg "Double precision model simulation") *Double precision model simulation*
+
+If NCO output is quantized to fixed point data, 18 bits in the provided example, the SNR decreases to 55.034 dB.
+
+
+![NCO_fixed](./NCO_LUT/matlab/fixed_precision_model_simulation.jpg "Fixed precision model simulation") *Fixed-point precision model simulation*
+
+## Error correction
+The most contribution to the noise is cased by the phase noise during quantization. The phase noise can be easily obtained and the output error can be compensated by using the product of phase noise and derivative at the selected phase.

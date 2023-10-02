@@ -37,3 +37,6 @@ pow_cos = sum(cos_ideal.^2)/length(phase);
 
 snr_sin = 10*log10(pow_sin/pow_err_sin);
 snr_cos = 10*log10(pow_cos/pow_err_cos);
+
+legend(strcat('cos, snr:', sprintf('%f', snr_cos)), strcat('sin, snr:', sprintf('%f', snr_sin)));
+%exportgraphics(gcf, 'double_precision_model_simulation.jpg')
