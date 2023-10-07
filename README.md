@@ -259,10 +259,20 @@ The most contribution to the noise is cased by the phase noise during quantizati
 
 # Polyphase filter
 ## Re-represent Z-transform of a filter, in case of downsampling
-![polyphase_filter](./polyphase_filter/downsample_system.png "polyphase_filter") <br> *downsample system* <br><br>
+<p align="center">
+<img src="./polyphase_filter/downsample_system.png" width="400" height="60"> <bar>
+</p>
+<div align="center">
+ <i>downsample system</i>
+</div>
+ 
 Figure above shows the downsampling system, where H(z) is a low-pass filter. However, from HW implementation perspective, it is not efficient. Becuase H(z) is running at original frequency, but downsampling module would discard $\frac{M-1}{M}$ filtered samples. Ployphase filter is designed to tackle this problem.
 
-The Z-transform of digital signal $h[n]$ is $H(z) = \sum_{n=-\infty}^{\infty}h[n]z^{-n}$. This can be rewritten as 
+The Z-transform of digital signal $h[n]$ is 
+
+$$H(z) = \sum_{n=-\infty}^{\infty}h[n]z^{-n}$$.
+
+This can be rewritten as 
 
 $$
 \begin{align}
@@ -270,26 +280,49 @@ H(z) &= \sum_{i=-\infty}^{\infty}\sum_{j=0}^{M-1}h[iM+j]z^{-(iM+j)}\\
 &=\sum_{j=0}^{M-1}z^{-j}\sum_{i=-\infty}^{\infty}h[iM+j]z^{-iM}
 \end{align}
 $$
+
 Note that $h[iM+j] (j\in[0,M-1])$ is the downsampled sequence with j shift. It has Z-transform $D_{j}(z) = \sum_{i=-\infty}^{\infty}h[iM+j]z^{-i}$. 
 
-$H(z)$ can be rewritten as $\sum_{j=0}^{M-1}z^{-j}D_{j}(z^{M})$.
+$H(z)$ can be rewritten as $$\sum_{j=0}^{M-1}z^{-j}D_{j}(z^{M})$$.
 Therefore, Z-transform of a filter can be drawn in the following form
-![polyphase_filter](./polyphase_filter/polyphase_filter.png "polyphase_filter")*H(z) in polyphase form*
+
+<p align="center">
+<img src="./polyphase_filter/polyphase_filter.png" width="400" height="400"> <bar>
+</p>
+<div align="center">
+ <i>polyphase_filter</i>
+</div>
+
 
 Figure below shows downsampling system, where H(z) is replaced by its polyphase form.
-![replaceHz](./polyphase_filter/replaceHz.png "replaceHz")<bar>
-*Replace H(z) in downsample system*
 
+<p align="center">
+<img src="./polyphase_filter/replaceHz.png" width="400" height="400"> <bar>
+</p>
+<div align="center">
+ <i>Replace H(z) in downsample system</i>
+</div>
+ 
 Shown in the following section, the above structure is equivalent to the structure below, where signals are downsampled first.
 
-![replaceHz](./polyphase_filter/equivalentSystem.png "replaceHz")<bar>
-*Equivalent downsample system*
+<p align="center">
+<img src="./polyphase_filter/equivalentSystem.png" width="400" height="400"> <bar>
+</p>
+<div align="center">
+ <i>Equivalent downsample system</i>
+</div>
+ 
 ## Proof of equivalent systems
 In the figure below, y1[n] is equal to y2[n].
-![identicalSystem](./polyphase_filter/identicalSystem.png "identicalSystem")<bar>
-*identical systems, y1[n] = y2[n]*<bar>
-
+<p align="center">
+<img src="./polyphase_filter/identicalSystem.png" width="400" height="100"> <bar>
+</p>
+<div align="center">
+ <i>identical systems, y1[n] = y2[n]</i>
+</div>
+ 
 In frequency domain, the Fourier transform of X'[n] is $X_{1}(\omega) = X(\omega)E_{0}(M\omega)$
+
 $$
 \begin{align}
 Y1(\omega) &= \frac{1}{M}\sum_{M-1}^{i=0}X_{1}(\frac{\omega}{M}-\frac{2\pi i}{M})\\
