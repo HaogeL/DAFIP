@@ -256,3 +256,45 @@ If NCO output is quantized to fixed point data, 18 bits in the provided example,
 
 ## Error correction
 The most contribution to the noise is cased by the phase noise during quantization. The phase noise can be easily obtained and the output error can be compensated by using the product of phase noise and derivative at the selected phase.
+
+# Polyphase filter
+## Re-represent Z-transform of a filter, in case of downsampling
+![polyphase_filter](./polyphase_filter/downsample_system.png "polyphase_filter") <br> *downsample system* <br><br>
+Figure above shows the downsampling system, where H(z) is a low-pass filter. However, from HW implementation perspective, it is not efficient. Becuase H(z) is running at original frequency, but downsampling module would discard $\frac{M-1}{M}$ filtered samples. Ployphase filter is designed to tackle this problem.
+
+The Z-transform of digital signal $h[n]$ is $H(z) = \sum_{n=-\infty}^{\infty}h[n]z^{-n}$. This can be rewritten as 
+
+$$
+\begin{align}
+H(z) &= \sum_{i=-\infty}^{\infty}\sum_{j=0}^{M-1}h[iM+j]z^{-(iM+j)}\\
+&=\sum_{j=0}^{M-1}z^{-j}\sum_{i=-\infty}^{\infty}h[iM+j]z^{-iM}
+\end{align}
+$$
+Note that $h[iM+j] (j\in[0,M-1])$ is the downsampled sequence with j shift. It has Z-transform $D_{j}(z) = \sum_{i=-\infty}^{\infty}h[iM+j]z^{-i}$. 
+
+$H(z)$ can be rewritten as $\sum_{j=0}^{M-1}z^{-j}D_{j}(z^{M})$.
+Therefore, Z-transform of a filter can be drawn in the following form
+![polyphase_filter](./polyphase_filter/polyphase_filter.png "polyphase_filter")*H(z) in polyphase form*
+
+Figure below shows downsampling system, where H(z) is replaced by its polyphase form.
+![replaceHz](./polyphase_filter/replaceHz.png "replaceHz")<bar>
+*Replace H(z) in downsample system*
+
+Shown in the following section, the above structure is equivalent to the structure below, where signals are downsampled first.
+
+![replaceHz](./polyphase_filter/equivalentSystem.png "replaceHz")<bar>
+*Equivalent downsample system*
+## Proof of equivalent systems
+In the figure below, y1[n] is equal to y2[n].
+![identicalSystem](./polyphase_filter/identicalSystem.png "identicalSystem")<bar>
+*identical systems, y1[n] = y2[n]*<bar>
+
+In frequency domain, the Fourier transform of X'[n] is $X_{1}(\omega) = X(\omega)E_{0}(M\omega)$
+$$
+\begin{align}
+Y1(\omega) &= \frac{1}{M}\sum_{M-1}^{i=0}X_{1}(\frac{\omega}{M}-\frac{2\pi i}{M})\\
+&=\frac{1}{M}\sum_{i=0}^{M-1}X(\frac{\omega}{M}-\frac{2\pi i}{M})E_{0}(\omega-2\pi i)\\
+&=E_{0}(\omega)\frac{1}{M}\sum_{i=0}^{M-1}X(\frac{\omega}{M}-\frac{2\pi i}{M})\\
+&=E_{0}(\omega)X_{2}(\omega)
+\end{align}
+$$
