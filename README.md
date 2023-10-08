@@ -281,7 +281,9 @@ H(z) &= \sum_{i=-\infty}^{\infty}\sum_{j=0}^{M-1}h[iM+j]z^{-(iM+j)}\\
 \end{align}
 $$
 
-Note that $h[iM+j] (j\in[0,M-1])$ is the downsampled sequence with j shift. It has Z-transform $D_{j}(z) = \sum_{i=-\infty}^{\infty}h[iM+j]z^{-i}$. 
+Note that $h[iM+j] (j\in[0,M-1])$ is the downsampled sequence with j shift. It has Z-transform 
+
+$$D_{j}(z) = \sum_{i=-\infty}^{\infty}h[iM+j]z^{-i}$$ 
 
 $H(z)$ can be rewritten as $$\sum_{j=0}^{M-1}z^{-j}D_{j}(z^{M})$$.
 Therefore, Z-transform of a filter can be drawn in the following form
