@@ -18,7 +18,9 @@ Digital ASIC FPGA IP examples
 - [LUT-based NCO](#numerically-controlled-oscillator)
   * [SNR](#double-precision-model-and-snr)
   * [Error correction](#error-correction)
-
+- [Polyphase filter](#polyphase-filter)
+  * [Polyphase representation](#re-represent-z-transform-of-a-filter-in-case-of-downsampling)
+  * [Proof of equivalent systems](#proof-of-equivalent-systems)
 # Overview
 | IP                  | Implementation | Verification | Documentation | Category |
 |---------------------|----------------|--------------|---------------|----------|
@@ -33,6 +35,7 @@ Digital ASIC FPGA IP examples
 | [FIR](https://github.com/HaogeL/DAFIP/tree/main/FIR)|:white_check_mark:|:white_check_mark:|:white_check_mark:| DSP   |
 | [QAMMOD](https://github.com/HaogeL/DAFIP/tree/main/QamMod)|:white_check_mark:|:white_check_mark:|:white_check_mark:| DSP   |
 | [NCO](https://github.com/HaogeL/DAFIP/tree/main/NCO_LUT)|:white_check_mark:|:white_check_mark:|:white_check_mark:| DSP   |
+| [Polyphase_fir](https://github.com/HaogeL/DAFIP/tree/main/polyphase_filter)|:white_check_mark:|:white_check_mark:|:white_check_mark:| DSP   |
 # IIR implementation
 This IIR implementation is an example of first-order IIR filer with testbench to check the simulation results. Key features of the provided IIR are:
 - Difference equation is $$y[n] = ax[n] + (1-a)y[n-1]$$, where a = 2^(-A). In the example, A is 3 and division operation is realized by arithmetic shift.
@@ -270,7 +273,7 @@ Figure above shows the downsampling system, where H(z) is a low-pass filter. How
 
 The Z-transform of digital signal $h[n]$ is 
 
-$$H(z) = \sum_{n=-\infty}^{\infty}h[n]z^{-n}$$.
+$$H(z) = \sum_{n=-\infty}^{\infty}h[n]z^{-n}$$
 
 This can be rewritten as 
 
@@ -285,7 +288,7 @@ Note that $h[iM+j] (j\in[0,M-1])$ is the downsampled sequence with j shift. It h
 
 $$D_{j}(z) = \sum_{i=-\infty}^{\infty}h[iM+j]z^{-i}$$ 
 
-$H(z)$ can be rewritten as $$\sum_{j=0}^{M-1}z^{-j}D_{j}(z^{M})$$.
+$H(z)$ can be rewritten as $$\sum_{j=0}^{M-1}z^{-j}E_{j}(z^{M})$$.
 Therefore, Z-transform of a filter can be drawn in the following form
 
 <p align="center">
@@ -314,6 +317,7 @@ Shown in the following section, the above structure is equivalent to the structu
  <i>Equivalent downsample system</i>
 </div>
  
+Matlab script [**demo_polyphase_filter.m**](https://github.com/HaogeL/DAFIP/tree/main/polyphase_filter/matlab/demo_polyphase_filter.m) shows the above two systems have the same output results.
 ## Proof of equivalent systems
 In the figure below, y1[n] is equal to y2[n].
 <p align="center">
